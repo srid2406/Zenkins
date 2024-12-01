@@ -1,0 +1,4 @@
+zcatalyst-cliq==0.0.1
+zcatalyst-sdk==0.0.2
+ujenkins
+regex==2024.11.6

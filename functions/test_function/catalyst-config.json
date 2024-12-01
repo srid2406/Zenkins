@@ -1,0 +1,16 @@
+{
+	"deployment": {
+		"name": "test_function",
+		"stack": "python_3_9",
+		"type": "integration",
+		"env_variables": {},
+		"integration_config": [
+			{
+				"service": "ZohoCliq"
+			}
+		]
+	},
+	"execution": {
+		"main": "main.py"
+	}
+}
