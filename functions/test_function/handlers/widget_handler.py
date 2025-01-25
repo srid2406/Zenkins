@@ -7,6 +7,11 @@ from zcatalyst_cliq.widget_handler import (
 import zcatalyst_sdk
 from ujenkins import JenkinsClient
 from datetime import datetime, timezone
+import logging
+
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger()
+
 
 
 @view_handler
@@ -184,6 +189,7 @@ def view_handler(req: WidgetExecutionHandlerRequest, res: WidgetResponse, *args)
                         builds.extend(client.nodes.get_all_builds(node))
 
                     table_rows = []
+                    LOGGER.log(logging.INFO, "Started Fetching table rows")
                     for build in builds:
                         job_name = build['job_name']
                         build_number = build['number']
@@ -232,12 +238,16 @@ def view_handler(req: WidgetExecutionHandlerRequest, res: WidgetResponse, *args)
                     title_text.type = "title"
                     title_text.text = "Jenkins Builds"
 
+                    LOGGER.log(logging.INFO, "Added title")
+
                     start_btn = title_text.new_widget_button()
                     start_btn.type = "invoke.function"
                     start_btn.id = "startbuild"
                     start_btn.name = "widgetfn"
                     start_btn.label = "Start Build(s)"
                     start_btn.emotion = "positive"
+
+                    LOGGER.log(logging.INFO, "Added start button")
 
                     # stop_btn = title_text.new_widget_button()
                     # stop_btn.type = "invoke.function"
@@ -248,13 +258,37 @@ def view_handler(req: WidgetExecutionHandlerRequest, res: WidgetResponse, *args)
 
                     table = title_section.new_widget_element()
                     table.type = "table"
+                    # table.text = "[More]($1)"
                     headers = ["ID", "Type", "Started By", "Start time", "Executor(s) utilized", "Artifacts", "Result", "Duration", "Building","URL"]
                     table.headers = headers
+
+                    LOGGER.log(logging.INFO, "Added Headers")
+
+
+                    # table_btn = table.new_button_object()
+                    # table_btn.type = "+"
+                    # table_btn.label = "More"
+                    # table_btn.hint = "Click to get more info"
+                    # table_btn.id = "more"
+                    # table_btn.name = "more"
+                    
+                    # action = table_btn.new_action_object()
+                    # action.type = "invoke.function"
+                    # data = action.new_action_data_obj()
+                    # data.name = "moreinfo"
+                    # data.owner = "sridamul@gmail.com"
+                    # action.data = data
+                    # table_btn.action = action
+                    # table.add_button_reference("1", table_btn)
                     table.rows = table_rows
+                    LOGGER.log(logging.INFO, "Added button reference")
 
                     title_text.add_widget_buttons(start_btn)
+                    LOGGER.log(logging.INFO, "Added widget buttons to the title")
                     title_section.add_elements(title_text, divider, table)
+                    LOGGER.log(logging.INFO, "Added elements to section")
                     res.add_sections(title_section)
+                    LOGGER.log(logging.INFO, f"Added section to response {res}")
                 except Exception as e:
                     section = res.new_widget_section()
                     section.id = '2'

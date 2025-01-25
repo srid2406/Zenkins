@@ -29,6 +29,31 @@ LOGGER = logging.getLogger()
 
 @button_function_handler
 def button_fn_handler(req: ButtonFunctionRequest, res: HandlerResponse, *args):
+    if req.name == "explore":
+        # msg = function_handler.new_handler_response().new_message()
+        # msg.text = f'Try Again {e}'
+        # msg.type = 'banner'
+        # msg.status = 'failure'
+        # return msg
+        connect_card = res.new_card()
+        connect_card.title = '## Step 1: Connecting to Jenkins Server'
+        txt = f"👉 Use `\connect` to connect to the Jenkins which requires the public accessible url, username and api key or password.\n👉 If your Jenkins Instance is hosted locally, then use [ngrok](https://ngrok.com/our-product/secure-tunnels) or [localtunnel](https://theboroer.github.io/localtunnel-www/) to expose the localhost to public.\n👉 A quicker way is to use [serveo.net](https://serveo.net/). Execute the following command in your terminal with root access to generate the public URL. ```ssh -R 80:localhost:<PORT> serveo.net```👉 Replace the port with your Jenkins host port. Jenkins usually use port `8080`\n"
+        res.set_text(txt)
+        explore_btn = res.new_button()
+        explore_btn.label = 'Next'
+        explore_btn.hint = 'Next card'
+        explore_btn.type = '+'
+
+        action = explore_btn.new_action_object()
+        action.type = 'invoke.function'
+
+        action_data = action.new_action_data_obj()
+        action_data.name = 'next1'
+
+        action.data = action_data
+        explore_btn.action= action
+        res.add_button(explore_btn)
+        res.card = connect_card
     # if req.name == "copy":
     #     app = zcatalyst_sdk.get_app("test")
     #     cache_service = app.cache()
@@ -113,6 +138,12 @@ def form_submit(req: FormFunctionRequest, res: HandlerResponse, *args):
 
             text = f"Hi *{req.user.first_name}*, \nThe connection to Jenkins was successful. :wink:"
             res.set_text(text)
+
+            # msg = function_handler.new_handler_response().new_message()
+            # msg.text = 'Connected to Jenkins Successfully'
+            # msg.type = 'banner'
+            # msg.status = 'success'
+            # return msg
 
             card = res.new_card()
             card.theme = "modern-inline"

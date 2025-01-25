@@ -19,12 +19,50 @@ from zcatalyst_cliq.bot_handler import (
 from zcatalyst_sdk.catalyst_app import CatalystApp
 import logging
 
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger()
+
 @welcome_handler
 def welcome_handler_fn(req: BotWelcomeHandlerRequest, res: HandlerResponse, *args):
-    res.text = f'Hello {req.user.first_name}. Welcome to Zenkins! This extension seamlessly integrates Jenkins with Zoho Cliq, allowing you to easily manage nodes, jobs, and builds while visualizing everything at a glance.\nStart your journey by typing `explore` to explore Zenkins.'
+    text = f'Hello {req.user.first_name}. Welcome to Zenkins! This extension seamlessly integrates Jenkins with Zoho Cliq, allowing you to easily manage nodes, jobs, and builds while visualizing everything at a glance.\nHave a happy journey :smile:'
     card = res.new_card()
     card.title = "Welcome to Zenkins"
+    explore_btn = res.new_button()
+    explore_btn.label = 'Explore'
+    explore_btn.hint = 'Explore more about Zenkins'
+    explore_btn.type = '+'
+
+    action = explore_btn.new_action_object()
+    action.type = 'invoke.function'
+
+    action_data = action.new_action_data_obj()
+    action_data.name = 'explore'
+                        
+    action.data = action_data
+    explore_btn.action= action
+    res.add_button(explore_btn)
     res.card = card
+    res.set_text(text)
+    LOGGER.log(logging.INFO, f"{res}")
+    # slide = res.new_slide()
+    # slide.type = "text"
+    # button = slide.new_button_obj()
+    # button.label = 'Start Build'
+    # button.key = "startbuild"
+    # button.type = '+'
+    # button.hint = 'Click to trigger the build process'
+
+    # action = button.new_action_object()
+    # action.type = 'invoke.function'
+
+    # action_data = action.new_action_data_obj()
+    # action_data.name = "build"
+    # action_data.owner = "sridamul@gmail.com"
+                        
+    # action.data = action_data
+    # button.action= action
+    # slide.add_buttons(button)
+    # res.add_slides(slide)
 #     slide = res.new_slide()
 #     slide.type = "text"
 #     slide.data = """Zenkins is a Zoho Cliq extension that integrates Jenkins with Zoho Cliq, allowing users to manage and interact with Jenkins servers directly from within the Zoho Cliq interface. With Zenkins, users can seamlessly control their Jenkins environment through simple commands and interactive widgets, improving productivity and streamlining DevOps processes.
@@ -66,7 +104,7 @@ def msg_handler(req: BotMessageHandlerRequest, res: HandlerResponse, *args):
         text = ''
         if not msg:
             text = 'Please enable \'Message\' in bot settings'
-        elif msg == 'hi' or msg == 'hello':
+        elif msg.lower() == 'hi' or msg.lower() == 'hello':
             text = f'Hi {req.user.first_name} :smile: . How are you doing ??'
 
             suggestions = res.new_suggestion_list()
@@ -82,14 +120,33 @@ def msg_handler(req: BotMessageHandlerRequest, res: HandlerResponse, *args):
             text = 'That\'s glad to hear :smile:'
         elif msg == 'meh' or msg == 'Worst':
             text = "Oops! Don't you worry. Your day is definitely going to get better. :grinning:"
-        elif msg == "explore" or msg == "details":
+        elif msg.lower() == "explore" or msg.lower() == "details":
             card = res.new_card()
             card.title = "Zenkins Guide"
             res.card = card
             text = 'Zenkins is a Zoho Cliq extension that integrates `Jenkins` with Zoho Cliq, allowing users to manage and interact with Jenkins servers directly from within the Zoho Cliq interface. With Zenkins, users can seamlessly control their Jenkins environment through simple commands and interactive widgets, improving productivity and streamlining DevOps processes.\n\n*Commands*\n1) `/connect`: Connects to the Jenkins Server.\n2) `/disconnect`: Disconnects the Jenkins Server. Use "/connect" to reconnect.\n3) `/getjobconfig`: Gets the Job configuration of an existing job.\n4) `/getnodeconfig`: Generates a Node configuration, which can be used in Node creation process.\n\n*Widgets*\n1) `System Info Tab`: Displays the Jenkins Server information\n2) `Jobs Tab`: Displays the information about each Job. Also allows us to "Create" and "Delete" jobs.\n3) `Builds Tab`: Displays the information about each Build. Also allows us to "Start" builds.\n4) `Nodes Tab`: Displays the information about each Node. Also allows us to "Create" and "Delete" nodes.\n\n*Resources*\n[Official Jenkins Website](https://www.jenkins.io/)\n[Jenkins on AWS](https://www.jenkins.io/doc/tutorials/tutorial-for-installing-jenkins-on-AWS/)\n[Guided Tutorial on Jenkins](https://www.jenkins.io/doc/pipeline/tour/getting-started/)'
             res.set_text(text)
         else:
-            text = "Oops! Sorry, I'm not sure about that.\n Type `explore` to learn more about Zenkins."
+            text = "Oops! Sorry, I'm not sure about that.\n Wanna learn about Zenkins?"
+            card = res.new_card()
+            card.title = "*Info*"
+            explore_btn = res.new_button()
+            explore_btn.label = 'Explore'
+            explore_btn.hint = 'Explore more about Zenkins'
+            explore_btn.key = 'explore'
+            explore_btn.type = '+'
+
+
+            action = explore_btn.new_action_object()
+            action.type = 'invoke.function'
+
+            action_data = action.new_action_data_obj()
+            action_data.name = 'explore'
+
+            action.data = action_data
+            explore_btn.action= action
+            res.add_button(explore_btn)
+            res.card = card
         res.set_text(text)
         return res
     except Exception as e:
